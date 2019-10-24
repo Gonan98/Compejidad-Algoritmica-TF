@@ -1,8 +1,9 @@
 Contenedores usados: 0
 Volumen disponible: 0 m3
 Volumen ocupado: 0 m3 (100%)
-Cajas a transportar: 6
+Cajas a transportar: 7
 Contenedor	Formato	Coordenadas	Orientacion
+0		A	(0,0,0)		1
 0		A	(0,0,0)		1
 0		A	(0,0,0)		1
 0		B	(0,0,0)		1

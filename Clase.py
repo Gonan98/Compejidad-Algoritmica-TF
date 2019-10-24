@@ -12,48 +12,6 @@ class caja:
         self.z = 0
         self.ori = 1
         self.C = 0
-    
-    def setX(self, x):
-        self.x = x
-        
-    def setY(self, y):
-        self.y = y
-        
-    def setZ(self, z):
-        self.z = z
-        
-    def setC(self, C):
-        self.C = C
-        
-    def getC(self):
-        return self.C
-        
-    def getX(self):
-        return self.x
-        
-    def getY(self):
-        return self.y
-        
-    def getZ(self):
-        return self.z
-    
-    def getAncho(self):
-        return self.ancho
-        
-    def getLargo(self):
-        return self.largo
-        
-    def getAlto(self):
-        return self.alto
-    
-    def getVolumen(self):
-        return self.alto
-    
-    def getIdent(self):
-        return self.ident
-    
-    def getOri(self):
-        return self.ori
 
 """ GENERACION AUTOMATICA DE DATOS:
 
@@ -132,7 +90,7 @@ f.write('Cajas a transportar: '+ str(nC) + '\n')
 f.write('Contenedor\tFormato\tCoordenadas\tOrientacion\n')
 for i in range(nC):
     cj = arr[i]
-    f.write(str(cj.getC())+'\t\t'+str(cj.getIdent())+'\t('
-            +str(cj.getX())+','+ str(cj.getY())+','+ str(cj.getZ())+')'
-            +'\t\t'+str(cj.getOri())+'\n')
+    f.write(str(cj.C)+'\t\t'+str(cj.ident)+'\t('
+            +str(cj.x)+','+ str(cj.y)+','+ str(cj.z)+')'
+            +'\t\t'+str(cj.ori)+'\n')
 f.close()
