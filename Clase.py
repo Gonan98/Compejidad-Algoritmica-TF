@@ -1,3 +1,5 @@
+import random as rnd
+
 class caja:
     def __init__(self, ancho, largo, alto, ident):
         self.ancho = ancho
