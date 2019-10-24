@@ -9,6 +9,7 @@ class caja:
         self.y = 0
         self.z = 0
         self.ori = 1
+        self.C = 0
     
     def setX(self, x):
         self.x = x
@@ -18,6 +19,12 @@ class caja:
         
     def setZ(self, z):
         self.z = z
+        
+    def setC(self, C):
+        self.C = C
+        
+    def getC(self):
+        return self.C
         
     def getX(self):
         return self.x
@@ -49,7 +56,7 @@ class caja:
 
 An, L, Al = 0, 0, 0
 arr = []
-f = open('Pack.txt', 'r')
+f = open('In.txt', 'r')
 fl = f.readline()
 An = int(fl[0])
 L = int(fl[2])
@@ -67,3 +74,23 @@ for i in range(n):
     al = int(cl[8])
     for i in range(n2):
         arr.append(caja(an,l,al,ide))
+        
+f.close()
+
+f = open('Out.txt','w')
+cont = 0
+volDis = 0
+volOcu = 0
+volOcuPor = 100
+nC = len(arr)
+f.write('Contenedores usados: '+ str(cont) + '\n')
+f.write('Volumen disponible: '+ str(volDis) + ' m3\n')
+f.write('Volumen ocupado: '+ str(volOcu) + ' m3 (' + str(volOcuPor) + '%)\n')
+f.write('Cajas a transportar: '+ str(nC) + '\n')
+f.write('Contenedor\tFormato\tCoordenadas\tOrientacion\n')
+for i in range(nC):
+    cj = arr[i]
+    f.write(str(cj.getC())+'\t\t'+str(cj.getIdent())+'\t('
+            +str(cj.getX())+','+ str(cj.getY())+','+ str(cj.getZ())+')'
+            +'\t\t'+str(cj.getOri())+'\n')
+f.close()
