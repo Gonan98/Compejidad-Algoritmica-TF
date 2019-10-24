@@ -53,6 +53,25 @@ class caja:
     def getOri(self):
         return self.ori
 
+""" ENTRADA MANUAL DE DATOS:
+
+arr = []
+An = int(input('Ingresa el ancho del contenedor: '))
+L = int(input('Ingresa el largo del contenedor: '))
+Al = int(input('Ingresa el alto del contenedor: '))
+n = int(input('Ingresa la cantidad de cajas rectangulares: '))
+
+for i in range(n):
+    print("Ingresa el id de la caja #", i+1, ": ",end=" ")
+    ide = input()
+    an = int(input('Ingresa el ancho de la caja: '))
+    l = int(input('Ingresa el largo de la caja: '))
+    an = int(input('Ingresa el alto de la caja: '))
+    n2 = int(input('Cantidad de cajas con este formato: '))
+    for j in range(n2):
+        arr.append(caja(an,l,al,ide))
+"""
+
 
 An, L, Al = 0, 0, 0
 arr = []
@@ -72,7 +91,7 @@ for i in range(n):
     an = int(cl[4])
     l = int(cl[6])
     al = int(cl[8])
-    for i in range(n2):
+    for j in range(n2):
         arr.append(caja(an,l,al,ide))
         
 f.close()
