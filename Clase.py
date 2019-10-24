@@ -53,6 +53,24 @@ class caja:
     def getOri(self):
         return self.ori
 
+""" GENERACION AUTOMATICA DE DATOS:
+
+arr = []
+An = rnd.randint(1,50)
+L = rnd.randint(1,50)
+Al = rnd.randint(1,50)
+n = rnd.randint(1,10)
+for i in range(n):
+    ide = chr(i+1+64)
+    an = rnd.randint(1, An)
+    l = rnd.randint(1, L)
+    al = rnd.randint(1, Al)
+    n2 = rnd.randint(1, 5)
+    for j in range(n2):
+        arr.append(caja(an,l,al,ide))
+"""
+
+
 """ ENTRADA MANUAL DE DATOS:
 
 arr = []
@@ -66,12 +84,13 @@ for i in range(n):
     ide = input()
     an = int(input('Ingresa el ancho de la caja: '))
     l = int(input('Ingresa el largo de la caja: '))
-    an = int(input('Ingresa el alto de la caja: '))
+    al = int(input('Ingresa el alto de la caja: '))
     n2 = int(input('Cantidad de cajas con este formato: '))
     for j in range(n2):
         arr.append(caja(an,l,al,ide))
 """
 
+#Ingreso de datos por archivo
 
 An, L, Al = 0, 0, 0
 arr = []
@@ -95,6 +114,8 @@ for i in range(n):
         arr.append(caja(an,l,al,ide))
         
 f.close()
+
+#Salida de datos en archivo
 
 f = open('Out.txt','w')
 cont = 0
