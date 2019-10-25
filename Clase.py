@@ -5,13 +5,15 @@ class caja:
         self.ancho = ancho
         self.largo = largo
         self.alto = alto
-        self.volumen = ancho*largo*alto
         self.ident = ident
         self.x = 0
         self.y = 0
         self.z = 0
         self.ori = 1
         self.C = 0
+    
+    def Volumen(self):
+        return self.ancho * self.largo * self.alto
 
 """ GENERACION AUTOMATICA DE DATOS:
 
