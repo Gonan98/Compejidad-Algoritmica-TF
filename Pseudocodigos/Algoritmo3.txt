@@ -1,0 +1,43 @@
+def Algoritmo3(arr, an, al, la)
+    nC = 1
+    volumen = arr[0].ancho * arr[0].alto * arr[0].largo 
+    arr[0].C = nC
+    
+    xmax = arr[0].largo
+    
+    ymax = arr[0].ancho
+
+    for i in range(1, len(arr))
+        
+        volumen += arr[i].ancho * arr[i].alto * arr[0].largo 
+        
+        if arr[i-1].x + arr[i].largo <= la
+            arr[i].C = nC
+            if  arr[i].ancho + arr[i-1].y + arr[i-1].ancho <= an:
+                if arr[i].alto + arr[i-1].z +arr[i-1].alto <= al
+                    if xmax < arr[i-1].x + arr[i].largo: xmax = arr[i-1].x + arr[i].largo
+                    if ymax < arr[i-1].y + arr[i].ancho: ymax = arr[i-1].y + arr[i].ancho
+                    arr[i].x = arr[i-1].x
+                    arr[i].y = arr[i-1].y
+                    arr[i].z = arr[i-1].z + arr[i].alto
+                else
+                    if xmax < arr[i-1].x + arr[i].largo: xmax = arr[i-1].x + arr[i].largo
+                    if ymax < arr[i-1].y + arr[i].ancho: ymax = arr[i-1].y + arr[i].ancho
+                    arr[i].x = arr[i-1].x
+                    arr[i].y = ymax
+                    arr[i].z = 0                
+            else
+                if xmax + arr[i].largo <= la:
+                    xmax = xmax + arr[i].largo
+                    ymax = arr[i].ancho
+                    arr[i].x = xmax
+                    arr[i].y = 0
+                    arr[i].z = 0
+                else:
+                    nC += 1
+                    arr[i].C = nC
+        else:
+            nC += 1
+            arr[i].C = nC
+            
+    return arr, nC, volumen
