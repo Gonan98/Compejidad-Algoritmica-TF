@@ -4,10 +4,63 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 
+import tkinter.filedialog
+
 pos = 0
 
+arr = []
+Largo = 0
+Ancho = 0
+Alto = 0
+
+
+TipoEntrada = 0
+
 def LecturaArchivo():
-       print("a")
+    archivo = tkinter.filedialog.askopenfilename()
+    global Largo, Ancho, Alto
+    global arr
+    global TipoEntrada
+    
+    TipoEntrada = 1
+    
+    f = open(archivo, 'r')
+    fl = f.readline()
+    Largo = int(fl[0])
+    Ancho = int(fl[2])
+    Alto = int(fl[4])    
+    sl = f.readline()
+    n = int(sl[0])
+    
+    for i in range(n):
+        cl = f.readline()
+        n2 = int(cl[0])
+        ide = cl[2]
+        l = int(cl[4])
+        an = int(cl[6])
+        al = int(cl[8])
+        for j in range(n2):
+            arr.append(caja(an,l,al,ide))
+    
+    
+    f.close()
+    
+def SalidaArchivo(arr, cont, volOcu):
+    f = open('Out.txt','w')
+    volDis = 0
+    volOcu = 0
+    volOcuPor = 100
+    f.write('Contenedores usados: '+ str(cont) + '\n')
+    f.write('Volumen disponible: '+ str(volDis) + ' m3\n')
+    f.write('Volumen ocupado: '+ str(volOcu) + ' m3 (' + str(volOcuPor) + '%)\n')
+    f.write('Cajas a transportar: '+ str(cont) + '\n')
+    f.write('Contenedor\tFormato\t\tCoordenadas\tOrientacion\tlargo\tancho\talto\n')
+    for i in range(len(arr)):
+        cj = arr[i]
+        f.write(str(cj.C)+'\t\t'+str(cj.ident)+'\t\t('
+                +str(cj.x)+','+ str(cj.y)+','+ str(cj.z)+')'
+                +'\t\t'+str(cj.ori)+'\t\t'+ str(cj.largo)+'\t'+str(cj.ancho)+'\t'+str(cj.alto)+'\n')
+    f.close()
 
 class caja:
     def __init__(self, ancho, largo, alto, ident):
@@ -66,22 +119,25 @@ def Algoritmo3(arr, an, al, la):
         
         if arr[i-1].x + arr[i].largo <= la:
             if  arr[i].ancho + arr[i-1].y <= an:
-                arr[i].C = nC
                 if arr[i].alto + arr[i-1].z +arr[i-1].alto <= al:
+                    arr[i].C = nC
                     if xmax < arr[i-1].x + arr[i].largo: xmax = arr[i-1].x + arr[i].largo
                     if ymax < arr[i-1].y + arr[i].ancho: ymax = arr[i-1].y + arr[i].ancho
                     arr[i].x = arr[i-1].x
                     arr[i].y = arr[i-1].y
                     arr[i].z = arr[i-1].z + arr[i-1].alto
                 else:
-                    if  arr[i].ancho + ymax <= an:    
-                        if xmax < arr[i-1].x + arr[i].largo: xmax = arr[i-1].x + arr[i].largo
-                        if ymax < arr[i-1].y + arr[i].ancho: ymax = arr[i-1].y + arr[i].ancho
+                    if  arr[i].ancho + ymax <= an:  
+                        arr[i].C = nC
                         arr[i].x = arr[i-1].x
                         arr[i].y = ymax
                         arr[i].z = 0 
+                        ymax = arr[i].y + arr[i].ancho
+                        if xmax < arr[i-1].x + arr[i].largo: xmax = arr[i-1].x + arr[i].largo
+                        
                     else:
                         if xmax + arr[i].largo <= la:
+                            arr[i].C = nC
                             arr[i].x = xmax
                             arr[i].y = 0
                             arr[i].z = 0
@@ -95,11 +151,12 @@ def Algoritmo3(arr, an, al, la):
                         
             else:
                 if xmax + arr[i].largo <= la:
-                    xmax = xmax + arr[i].largo
-                    ymax = arr[i].ancho
+                    arr[i].C = nC
                     arr[i].x = xmax
                     arr[i].y = 0
                     arr[i].z = 0
+                    xmax = xmax + arr[i].largo
+                    ymax = arr[i].ancho
                 else:
                     xmax = arr[i].largo
                     ymax = arr[i].ancho
@@ -111,7 +168,6 @@ def Algoritmo3(arr, an, al, la):
             
     return arr, nC, volumen
 
-arr = []
 
 def AgregarCaja():
     global arr
@@ -122,35 +178,77 @@ algoritmo = 1
 
 def BotonAlgoritmo1():
     global algoritmo
+    global arr
+    global Ancho, Alto, Largo
+    global TipoEntrada
+    arrAux = arr
     algoritmo = 1
-    MostrarAlgoritmo(algoritmo)
-    
+    if TipoEntrada == 0:
+        Ancho = int(c_ancho.get())
+        Alto = int(c_alto.get())
+        Largo = int(c_largo.get())
+        MostrarAlgoritmo(algoritmo, arrAux, Ancho, Largo, Alto)
+        arr = []
+    else:
+         MostrarAlgoritmo(algoritmo, arrAux, Ancho, Largo, Alto)
+         arr = []
+         TipoEntrada = 0
+         
+         
 def BotonAlgoritmo2():
     global algoritmo
+    global arr
+    global Ancho, Alto, Largo
+    global TipoEntrada
+    arrAux = arr
     algoritmo = 2
-    MostrarAlgoritmo(algoritmo)
+    if TipoEntrada == 0:
+        Ancho = int(c_ancho.get())
+        Alto = int(c_alto.get())
+        Largo = int(c_largo.get())
+        MostrarAlgoritmo(algoritmo, arrAux, Ancho, Largo, Alto)
+        arr = []
+    else:
+         MostrarAlgoritmo(algoritmo, arrAux, Ancho, Largo, Alto)
+         arr = []
+         TipoEntrada = 0
 
 def BotonAlgoritmo3():
     global algoritmo
-    algoritmo = 3
-    MostrarAlgoritmo(algoritmo)
-
-def MostrarAlgoritmo(algoritmo):
     global arr
+    global Ancho, Alto, Largo
+    global TipoEntrada
+    arrAux = arr
+    algoritmo = 3
+    if TipoEntrada == 0:
+        Ancho = int(c_ancho.get())
+        Alto = int(c_alto.get())
+        Largo = int(c_largo.get())
+        MostrarAlgoritmo(algoritmo, arrAux, Ancho, Largo, Alto)
+        arr = []
+    else:
+         MostrarAlgoritmo(algoritmo, arrAux, Ancho, Largo, Alto)
+         arr = []
+         TipoEntrada = 0
+
+def MostrarAlgoritmo(algoritmo, arr, Ancho, Largo, Alto):
     
     if algoritmo == 1:
         arr = Sort(arr)
-        arr, cont, volOcu = Algoritmo3(arr, int(c_ancho.get()), int(c_alto.get()), int(c_largo.get()))
+        arr, cont, volOcu = Algoritmo3(arr, Ancho, Alto, Largo)
     elif algoritmo == 2:
         arr = Sort(arr)
-        arr, cont, volOcu = Algoritmo3(arr, int(c_ancho.get()), int(c_alto.get()), int(c_largo.get()))
+        arr, cont, volOcu = Algoritmo3(arr, Ancho, Alto, Largo)
     else:
         arr = Sort(arr)
-        arr, cont, volOcu = Algoritmo3(arr, int(c_ancho.get()), int(c_alto.get()), int(c_largo.get()))
-      
+        arr, cont, volOcu = Algoritmo3(arr, Ancho, Alto, Largo)
+     
+    
+    SalidaArchivo(arr, cont, volOcu)
+    
     plt.rcParams['toolbar'] = 'None'
     
-    x, y, z = np.indices((int(c_largo.get()), int(c_ancho.get()), int(c_alto.get())))
+    x, y, z = np.indices((Largo, Ancho, Alto))
     
     arrCubos = []
     voxels = [arrCubos]*cont
@@ -180,11 +278,19 @@ def MostrarAlgoritmo(algoritmo):
         
         ax = fig.gca(projection='3d')
         
+        ax.set_xlabel('( X ) Largo')
+        ax.set_ylabel('( Y ) Ancho')
+        ax.set_zlabel('( Z ) Alto')
+        
+        
         if pos == len(voxels)-1:
             pos = -1
         
         if pos < len(voxels)-1:
             pos = pos + 1
+        
+        ax.set_title('Contenedor Número ' + str(pos))
+        
         
         for j in range(len(voxels)):
                 for i in range(len(voxels[pos])):
@@ -218,6 +324,10 @@ def MostrarAlgoritmo(algoritmo):
             ax.voxels(voxels[0][i], facecolors='yellow', edgecolor='k')
             
     fig.canvas.mpl_connect('key_press_event', right)
+    ax.set_title('Contenedor Número 0')
+    ax.set_xlabel('( X ) Largo')
+    ax.set_ylabel('( Y ) Ancho')
+    ax.set_zlabel('( Z ) Alto')
     plt.show()
 
 ventana = tk.Tk()
