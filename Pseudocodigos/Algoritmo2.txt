@@ -1,0 +1,25 @@
+Funcion Empaquetar(Cajas[], Contenedor)
+
+	Ordenar Cajas[] de forma descendente respecto al volumen
+	
+
+Fin Funcion
+
+Inicio
+	Contenedor: contenedor en el cual se empacaran las cajas
+	Cajas: lista de cajas a empacar
+	CajasEmp: lista de cajas empacadas
+	N: numero de cajas a empacar
+	Ordenar Cajas de forma descendente respecto a su volumen
+	
+	CajasEmp[0] <- Cajas[0]
+	Para i<-1 hasta N
+		
+		Si Cajas[i].Ancho <= Contenedor.Ancho -(CajasEmp[i-1].X + CajasEmp[i-1].Ancho) Entonces
+			CajasEmp[i] <- Cajas[i]
+		Sino Cajas[i].Alto <= Contenedor.Alto - (CajasEmp[i-1].Y + CajasEmp[i-1].Alto) Entonces
+			CajasEmp[i] <- Cajas[i]
+		Fin Si
+		
+	Fin Para
+Fin

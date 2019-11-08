@@ -1,6 +1,6 @@
 import random as rnd
 
-class caja:
+class Caja:
     def __init__(self, ancho, largo, alto, ident):
         self.ancho = ancho
         self.largo = largo
@@ -14,6 +14,34 @@ class caja:
     
     def Volumen(self):
         return self.ancho * self.largo * self.alto
+
+    def Rotado(self):
+        if self.ori == 1:
+            return self.largo, self.ancho, self.alto
+        elif self.ori == 2:
+            return self.ancho, self.largo, self.alto
+        elif self.ori == 3:
+            return self.largo, self.alto, self.ancho
+        elif self.ori == 4:
+            return self.alto, self.largo, self.ancho
+        elif self.ori == 5:
+            return self.ancho, self.alto, self.largo
+        elif self.ori == 6:
+            return self.alto, self.ancho, self.largo
+        else:
+            return -1, -1, -1
+    
+    def Colisiona(self, caja):
+        l1,w1,h1 = self.Rotado()
+        l2,w2,h2 = caja.Rotado()
+        return self.x <= caja.x + l2 and self.x + l1 >= caja.x and self.y <= caja.y + w2 and self.y + w1 >= caja.y and self.z <= caja.z + h2 and self.z + h1 >= caja.z
+
+    # Pos1: x->largo y->ancho z->alto
+    # Pos2: x->ancho y->largo z->alto
+    # Pos3: x->largo y->alto z->ancho
+    # Pos4: x->alto y->largo z->ancho
+    # Pos5: x->ancho y->alto z->largo
+    # Pos6: x->alto y->ancho z->largo
 
 """ GENERACION AUTOMATICA DE DATOS:
 
@@ -73,7 +101,7 @@ for i in range(n):
     l = int(cl[6])
     al = int(cl[8])
     for j in range(n2):
-        arr.append(caja(an,l,al,ide))
+        arr.append(Caja(an,l,al,ide))
         
 f.close()
 
