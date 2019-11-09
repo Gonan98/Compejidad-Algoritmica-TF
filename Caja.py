@@ -35,4 +35,9 @@ class Caja:
     def Superpone(self, caja):
         l1,w1,h1 = self.Rotado()
         l2,w2,h2 = caja.Rotado()
-        return self.x < caja.x + l2 and self.x + l1 > caja.x and self.y < caja.y + w2 and self.y + w1 > caja.y and self.z < caja.z + h2 and self.z + h1 > caja.z
+        return (self.x < caja.x + l2 
+                and self.x + l1 > caja.x 
+                and self.y < caja.y + w2 
+                and self.y + w1 > caja.y 
+                and self.z < caja.z + h2 
+                and self.z + h1 > caja.z)

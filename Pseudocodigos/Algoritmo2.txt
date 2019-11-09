@@ -1,25 +1,67 @@
-Funcion Empaquetar(Cajas[], Contenedor)
+def HaySuperpocicion(cajas, empacado, indice):
+    queue = cajas.copy()
+    c = queue.pop(indice)
+    n = len(queue)
+    for i in range(n):
+        if empacado[i] and queue[i].C == c.C:
+            if c.Superpone(queue[i]):
+                return True
+    return False
 
-	Ordenar Cajas[] de forma descendente respecto al volumen
-	
+def Cabe(cajaActual, cajaAdy, contenedorW, contenedorH, contenedorL):
+    for i in range(6):
+        cajaActual.ori = i + 1
+        if (cajaAdy.x + cajaAdy.Rotado()[0] + cajaActual.Rotado()[0] <= contenedorL
+            and cajaAdy.y + cajaAdy.Rotado()[1] + cajaActual.Rotado()[1] <= contenedorW
+            and cajaAdy.z + cajaAdy.Rotado()[2] + cajaActual.Rotado()[2] <= contenedorH):
+            return True
+    cajaActual.ori = 1
+    return False
 
-Fin Funcion
+def Algoritmo2(cajas, contenedorW, contenedorH, contenedorL):
+    quickSort(cajas,0,len(cajas)-1)
+    n = len(cajas)
+    contenedor = 0
+    empacado = [False] * n
+    out = []
 
-Inicio
-	Contenedor: contenedor en el cual se empacaran las cajas
-	Cajas: lista de cajas a empacar
-	CajasEmp: lista de cajas empacadas
-	N: numero de cajas a empacar
-	Ordenar Cajas de forma descendente respecto a su volumen
-	
-	CajasEmp[0] <- Cajas[0]
-	Para i<-1 hasta N
-		
-		Si Cajas[i].Ancho <= Contenedor.Ancho -(CajasEmp[i-1].X + CajasEmp[i-1].Ancho) Entonces
-			CajasEmp[i] <- Cajas[i]
-		Sino Cajas[i].Alto <= Contenedor.Alto - (CajasEmp[i-1].Y + CajasEmp[i-1].Alto) Entonces
-			CajasEmp[i] <- Cajas[i]
-		Fin Si
-		
-	Fin Para
-Fin
+    while False in empacado:
+        for actual in range(n):
+            if not empacado[actual]:
+                contenedor+=1
+                cajas[actual].C = contenedor
+                empacado[actual] = True
+            for i in range(n):
+                if empacado[i]: continue
+                if Cabe(cajas[i], cajas[actual], contenedorW, contenedorH, contenedorL) and not HaySuperpocicion(cajas, empacado, i):
+                    cajas[i].x = cajas[actual].x + cajas[actual].Rotado()[0]
+                    cajas[i].y = cajas[actual].y
+                    cajas[i].z = cajas[actual].z
+                    empacado[i] = True
+                    cajas[i].C = contenedor
+                    out.append((cajas[i].ident,cajas[i].x,cajas[i].y,cajas[i].z,cajas[i].ori))
+                    break
+
+            for j in range(n):
+                if empacado[j]: continue
+                if Cabe(cajas[j], cajas[actual], contenedorW, contenedorH, contenedorL) and not HaySuperpocicion(cajas, empacado, j):
+                    cajas[j].x = cajas[actual].x
+                    cajas[j].y = cajas[actual].y + cajas[actual].Rotado()[1]
+                    cajas[j].z = cajas[actual].z
+                    empacado[j] = True
+                    cajas[j].C = contenedor
+                    out.append((cajas[j].ident,cajas[j].x,cajas[j].y,cajas[j].z,cajas[j].ori))
+                    break
+
+            for k in range(n):
+                if empacado[k]: continue
+                if Cabe(cajas[k], cajas[actual], contenedorW, contenedorH, contenedorL) and not HaySuperpocicion(cajas, empacado, k):
+                    cajas[k].x = cajas[actual].x
+                    cajas[k].y = cajas[actual].y
+                    cajas[k].z = cajas[actual].z + cajas[actual].Rotado()[2]
+                    empacado[k] = True
+                    cajas[k].C = contenedor
+                    out.append((cajas[k].ident,cajas[k].x,cajas[k].y,cajas[k].z,cajas[k].ori))
+                    break
+
+    return out, cajas
