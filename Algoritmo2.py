@@ -27,7 +27,6 @@ def Algoritmo2(cajas, contenedorW, contenedorH, contenedorL):
     n = len(cajas)
     contenedor = 0
     empacado = [False] * n
-    # out = []
     volumen = 0
 
     while False in empacado:
@@ -46,7 +45,6 @@ def Algoritmo2(cajas, contenedorW, contenedorH, contenedorL):
                     empacado[i] = True
                     cajas[i].C = contenedor
                     volumen += cajas[i].Volumen()
-                    # out.append((cajas[i].ident,cajas[i].x,cajas[i].y,cajas[i].z,cajas[i].ori))
                     break
 
             for j in range(n):
@@ -58,7 +56,6 @@ def Algoritmo2(cajas, contenedorW, contenedorH, contenedorL):
                     empacado[j] = True
                     cajas[j].C = contenedor
                     volumen += cajas[j].Volumen()
-                    # out.append((cajas[j].ident,cajas[j].x,cajas[j].y,cajas[j].z,cajas[j].ori))
                     break
 
             for k in range(n):
@@ -70,7 +67,6 @@ def Algoritmo2(cajas, contenedorW, contenedorH, contenedorL):
                     empacado[k] = True
                     cajas[k].C = contenedor
                     volumen += cajas[k].Volumen()
-                    # out.append((cajas[k].ident,cajas[k].x,cajas[k].y,cajas[k].z,cajas[k].ori))
                     break
 
     return cajas, contenedor, volumen
@@ -88,18 +84,18 @@ def main():
                 cajas.append(Caja(w,l,h,chr(i+65)))
                 break
     
-    print(Algoritmo2(cajas,20,25,30))
+    gaa, _, _ = Algoritmo2(cajas,20,25,30)
 
-    # for c in gaa:
-    #    print(str(c.ident),end=' ')
-    #    print(str(c.x),end=' ')
-    #    print(str(c.y),end=' ')
-    #    print(str(c.z),end=' ')
-    #    print(str(c.ori),end=' ')
-    #   print(str(c.C),end='   ')
-    #   print(str(c.ancho),end=' ')
-    #    print(str(c.alto),end=' ')
-    #    print(str(c.largo))
+    for c in gaa:
+        print(str(c.ident),end=' ')
+        print(str(c.x),end=' ')
+        print(str(c.y),end=' ')
+        print(str(c.z),end=' ')
+        print(str(c.ori),end=' ')
+        print(str(c.C),end='   ')
+        print(str(c.ancho),end=' ')
+        print(str(c.alto),end=' ')
+        print(str(c.largo))
 
 if __name__ == "__main__":
     main()
