@@ -7,7 +7,7 @@ def NFDH(arr, an, al, la):
     zn = arr[0].alto
     zant = 0
     for i in range(1, len(arr)):
-        volumen += arr[i].ancho * arr[i].alto * arr[0].largo 
+        volumen += arr[i].Volumen()
         w = arr[i-1].y + arr[i-1].ancho + arr[i].ancho
         if xant + arr[i].largo <= la:
             if w <= an:

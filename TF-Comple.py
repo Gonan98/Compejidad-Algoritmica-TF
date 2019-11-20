@@ -3,6 +3,7 @@ import tkinter as tk
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
+import random as rnd
 
 import tkinter.filedialog
 
@@ -16,40 +17,40 @@ Alto = 0
 
 TipoEntrada = 0
 
+def readWithSpace(f):
+    return (int(x) for x in f.readline().strip().split(' '))
+
+def readWithSpace2(f):
+    return (x for x in f.readline().strip().split(' '))
+
 def LecturaArchivo():
     archivo = tkinter.filedialog.askopenfilename()
     global Largo, Ancho, Alto
     global arr
     global TipoEntrada
     
+    arr = []
     TipoEntrada = 1
     
     f = open(archivo, 'r')
-    fl = f.readline()
-    Largo = int(fl[0])
-    Ancho = int(fl[2])
-    Alto = int(fl[4])    
+    Largo, Ancho, Alto = readWithSpace(f)  
     sl = f.readline()
     n = int(sl[0])
     
     for i in range(n):
-        cl = f.readline()
-        n2 = int(cl[0])
-        ide = cl[2]
-        l = int(cl[4])
-        an = int(cl[6])
-        al = int(cl[8])
+        n2, ide, l, an, al = readWithSpace2(f)
+        n2 = int(n2)
+        ide = str(ide)
+        l = int(l)
+        an = int(an)
+        al = int(al)
         for j in range(n2):
-            arr.append(caja(an,l,al,ide))
-    
-    
+            arr.append(Caja(an,l,al,ide))
+            
     f.close()
     
-def SalidaArchivo(arr, cont, volOcu):
+def SalidaArchivo(arr, cont, volOcu, volDis, volOcuPor):
     f = open('Out.txt','w')
-    volDis = 0
-    volOcu = 0
-    volOcuPor = 100
     f.write('Contenedores usados: '+ str(cont) + '\n')
     f.write('Volumen disponible: '+ str(volDis) + ' m3\n')
     f.write('Volumen ocupado: '+ str(volOcu) + ' m3 (' + str(volOcuPor) + '%)\n')
@@ -62,22 +63,159 @@ def SalidaArchivo(arr, cont, volOcu):
                 +'\t\t'+str(cj.ori)+'\t\t'+ str(cj.largo)+'\t'+str(cj.ancho)+'\t'+str(cj.alto)+'\n')
     f.close()
 
-class caja:
+def GenerarRandom():
+    global Ancho, Largo, Alto, arr
+    global TipoEntrada
+    
+    TipoEntrada = 1
+    arr = []
+    Ancho = rnd.randint(1,10)
+    Largo = rnd.randint(1,10)
+    Alto = rnd.randint(1,10)
+    for i in range(int(nAle.get())):
+        ide = chr(i+1+64)
+        an = rnd.randint(1, Ancho)
+        l = rnd.randint(1, Largo)
+        al = rnd.randint(1, Alto)
+        arr.append(Caja(an,l,al,ide))
+
+class Caja:
     def __init__(self, ancho, largo, alto, ident):
         self.ancho = ancho
         self.largo = largo
         self.alto = alto
-        self.volumen = ancho*largo*alto
         self.ident = ident
         self.x = 0
         self.y = 0
         self.z = 0
         self.ori = 1
         self.C = 0
-        
+    
     def Volumen(self):
         return self.ancho * self.largo * self.alto
-        
+
+    def Rotado(self):
+        if self.ori == 1:
+            return self.largo, self.ancho, self.alto
+        elif self.ori == 2:
+            return self.ancho, self.largo, self.alto
+        elif self.ori == 3:
+            return self.largo, self.alto, self.ancho
+        elif self.ori == 4:
+            return self.alto, self.largo, self.ancho
+        elif self.ori == 5:
+            return self.ancho, self.alto, self.largo
+        elif self.ori == 6:
+            return self.alto, self.ancho, self.largo
+        else:
+            return -1, -1, -1
+
+    def Coordenadas(self):
+        return self.x, self.y, self.z
+    
+    def Superpone(self, caja):
+        l1,w1,h1 = self.Rotado()
+        l2,w2,h2 = caja.Rotado()
+        return (self.x < caja.x + l2 
+                and self.x + l1 > caja.x 
+                and self.y < caja.y + w2 
+                and self.y + w1 > caja.y 
+                and self.z < caja.z + h2 
+                and self.z + h1 > caja.z)
+
+
+def _partition(arr,low,high): 
+    i = ( low-1 )         # index of smaller element 
+    pivot = arr[high]     # pivot 
+  
+    for j in range(low , high): 
+        if arr[j].Volumen() > pivot.Volumen(): 
+            i = i+1 
+            arr[i],arr[j] = arr[j],arr[i] 
+  
+    arr[i+1],arr[high] = arr[high],arr[i+1] 
+    return (i+1) 
+  
+# Function to do Quick sort 
+def quickSort(arr,low,high): 
+    if low < high: 
+  
+        pi = _partition(arr,low,high)
+  
+        quickSort(arr, low, pi-1)
+        quickSort(arr, pi+1, high)
+
+def HaySuperpocicion(cajas, empacado, indice):
+    queue = cajas.copy()
+    c = queue.pop(indice)
+    n = len(queue)
+    for i in range(n):
+        if empacado[i] and queue[i].C == c.C:
+            if c.Superpone(queue[i]):
+                return True
+    return False
+
+def Cabe(cajaActual, cajaAdy, contenedorW, contenedorH, contenedorL):
+    for i in range(6):
+        cajaActual.ori = i + 1
+        if (cajaAdy.x + cajaAdy.Rotado()[0] + cajaActual.Rotado()[0] <= contenedorL
+            and cajaAdy.y + cajaAdy.Rotado()[1] + cajaActual.Rotado()[1] <= contenedorW
+            and cajaAdy.z + cajaAdy.Rotado()[2] + cajaActual.Rotado()[2] <= contenedorH):
+            return True
+    cajaActual.ori = 1
+    return False
+
+
+def Algoritmo2(cajas, contenedorW, contenedorH, contenedorL):
+    quickSort(cajas,0,len(cajas)-1)
+    n = len(cajas)
+    contenedor = 0
+    empacado = [False] * n
+    volumen = 0
+
+    while False in empacado:
+        for actual in range(n):
+            if not empacado[actual]:
+                contenedor+=1
+                cajas[actual].C = contenedor
+                empacado[actual] = True
+                volumen += cajas[actual].Volumen()
+            for i in range(n):
+                if empacado[i]: continue
+                if Cabe(cajas[i], cajas[actual], contenedorW, contenedorH, contenedorL) and not HaySuperpocicion(cajas, empacado, i):
+                    cajas[i].x = cajas[actual].x + cajas[actual].Rotado()[0]
+                    cajas[i].y = cajas[actual].y
+                    cajas[i].z = cajas[actual].z
+                    empacado[i] = True
+                    cajas[i].C = contenedor
+                    volumen += cajas[i].Volumen()
+                    break
+
+            for j in range(n):
+                if empacado[j]: continue
+                if Cabe(cajas[j], cajas[actual], contenedorW, contenedorH, contenedorL) and not HaySuperpocicion(cajas, empacado, j):
+                    cajas[j].x = cajas[actual].x
+                    cajas[j].y = cajas[actual].y + cajas[actual].Rotado()[1]
+                    cajas[j].z = cajas[actual].z
+                    empacado[j] = True
+                    cajas[j].C = contenedor
+                    volumen += cajas[j].Volumen()
+                    break
+
+            for k in range(n):
+                if empacado[k]: continue
+                if Cabe(cajas[k], cajas[actual], contenedorW, contenedorH, contenedorL) and not HaySuperpocicion(cajas, empacado, k):
+                    cajas[k].x = cajas[actual].x
+                    cajas[k].y = cajas[actual].y
+                    cajas[k].z = cajas[actual].z + cajas[actual].Rotado()[2]
+                    empacado[k] = True
+                    cajas[k].C = contenedor
+                    volumen += cajas[k].Volumen()
+                    break
+
+    return cajas, contenedor, volumen
+
+
 
 def merge1(i, d):
     li = len(i)
@@ -117,7 +255,7 @@ def NFDH(arr, an, al, la):
     zn = arr[0].alto
     zant = 0
     for i in range(1, len(arr)):
-        volumen += arr[i].ancho * arr[i].alto * arr[0].largo 
+        volumen += arr[i].Volumen()
         w = arr[i-1].y + arr[i-1].ancho + arr[i].ancho
         if xant + arr[i].largo <= la:
             if w <= an:
@@ -182,7 +320,7 @@ def merge3(i, d):
         elif ci == li:
             r.append(d[cd])
             cd += 1
-        elif i[ci].volumen > d[cd].volumen:
+        elif i[ci].Volumen() > d[cd].Volumen():
             r.append(i[ci])
             ci += 1
         else:  
@@ -200,7 +338,7 @@ def Sort3(V):
 
 def Algoritmo3(arr, an, al, la):
     nC = 1
-    volumen = arr[0].ancho * arr[0].alto * arr[0].largo 
+    volumen = arr[0].Volumen()
     arr[0].C = nC
     
     xmax = arr[0].largo
@@ -209,7 +347,7 @@ def Algoritmo3(arr, an, al, la):
 
     for i in range(1, len(arr)):
         
-        volumen += arr[i].ancho * arr[i].alto * arr[i].largo 
+        volumen += arr[i].Volumen()
         
         if arr[i-1].x + arr[i].largo <= la:
             if  arr[i].ancho + arr[i-1].y <= an:
@@ -266,7 +404,7 @@ def Algoritmo3(arr, an, al, la):
 def AgregarCaja():
     global arr
     for j in range(int(c_caja.get())):
-        arr.append(caja(int(anc_caja.get()), int(lar_caja.get()) , int(alt_caja.get()), int(n_caja.get())))
+        arr.append(Caja(int(anc_caja.get()), int(lar_caja.get()) , int(alt_caja.get()), int(n_caja.get())))
 
 algoritmo = 1
 
@@ -331,14 +469,16 @@ def MostrarAlgoritmo(algoritmo, arr, Ancho, Largo, Alto):
         arr = Sort1(arr)
         arr, cont, volOcu = NFDH(arr, Ancho, Alto, Largo)
     elif algoritmo == 2:
-        arr = Sort3(arr)
-        arr, cont, volOcu = Algoritmo3(arr, Ancho, Alto, Largo)
+        arr, cont, volOcu = Algoritmo2(arr, Ancho, Alto, Largo)
     else:
         arr = Sort3(arr)
         arr, cont, volOcu = Algoritmo3(arr, Ancho, Alto, Largo)
      
+    volDis = (Ancho*Largo*Alto*cont) - volOcu
+    volOcuPor = (volOcu*100)/(Ancho*Largo*Alto*cont)
     
-    SalidaArchivo(arr, cont, volOcu)
+    
+    SalidaArchivo(arr, cont, volOcu, volDis, volOcuPor)
     
     plt.rcParams['toolbar'] = 'None'
     
@@ -383,7 +523,7 @@ def MostrarAlgoritmo(algoritmo, arr, Ancho, Largo, Alto):
         if pos < len(voxels)-1:
             pos = pos + 1
         
-        ax.set_title('Contenedor Número ' + str(pos))
+        ax.set_title('Contenedor Número ' + str(pos+1))
         
         
         for j in range(len(voxels)):
@@ -418,7 +558,7 @@ def MostrarAlgoritmo(algoritmo, arr, Ancho, Largo, Alto):
             ax.voxels(voxels[0][i], facecolors='yellow', edgecolor='k')
             
     fig.canvas.mpl_connect('key_press_event', right)
-    ax.set_title('Contenedor Número 0')
+    ax.set_title('Contenedor Número 1')
     ax.set_xlabel('( X ) Largo')
     ax.set_ylabel('( Y ) Ancho')
     ax.set_zlabel('( Z ) Alto')
@@ -508,6 +648,12 @@ archivos = tk.Label(ventana, text="Entrada de Datos por Archivo", bg = "steel bl
 archivos.place(x=10, y=320)
 archivos.config(font = ("Verdana", 10))
 
+archivos = tk.Label(ventana, text="Generar datos aleatoreos n =", bg = "steel blue", fg="black")
+archivos.place(x=10, y=350)
+archivos.config(font = ("Verdana", 10))
+
+nAle=tk.Entry(ventana, width=4)
+nAle.place(x=215, y=350)
 #------------------------------------------------------
 
 #--------------- BOTONES --------------
@@ -530,7 +676,12 @@ boton4.place(x=380, y=215)
 
 boton5 = tk.Button(ventana, text="Lectura Archivo", fg="black", command=LecturaArchivo, height = 2, width = 15)
 boton5.config(font = ("Verdana", 5))
-boton5.place(x=230, y=320)
+boton5.place(x=255, y=320)
+
+boton6 = tk.Button(ventana, text="Generar", fg="black", command=GenerarRandom, height = 2, width = 15)
+boton6.config(font = ("Verdana", 5))
+boton6.place(x=255, y=350)
+
 
 #-----------------------------------------------
 
